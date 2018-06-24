@@ -666,9 +666,7 @@ impl InflateStream {
         }
 
         if self.buffer.len() < pos_end as usize {
-            unsafe {
-                self.buffer.set_len(pos_end as usize);
-            }
+            self.buffer.resize(pos_end as usize, 0u8);
         }
         for i in self.pos as usize..pos_end as usize {
             self.buffer[i] = self.buffer[i - dist as usize];
