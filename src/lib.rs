@@ -668,9 +668,17 @@ impl InflateStream {
         if self.buffer.len() < pos_end as usize {
             self.buffer.resize(pos_end as usize, 0u8);
         }
-        for i in self.pos as usize..pos_end as usize {
-            self.buffer[i] = self.buffer[i - dist as usize];
+
+        fill_slice_with_subslice(&mut self.buffer, (self.pos as usize - dist as usize, self.pos as usize), (self.pos as usize, pos_end as usize));
+        fn fill_slice_with_subslice(slice: &mut[u8], (source_from, source_to): (usize, usize), (dest_from, dest_to): (usize, usize)) {
+            let (source, destination) = if dest_from >= source_from {slice.split_at_mut(dest_from)} else {slice.split_at_mut(source_from)};
+            let source = &mut source[source_from..source_to];
+            let destination = &mut destination[..dest_to-dest_from];
+            for i in (0..( (destination.len()) / source.len() )).map(|x| x * source.len()) {
+                destination[i..source.len()+i].copy_from_slice(&source);
+            }
         }
+
         self.pos = pos_end;
         Ok(left)
     }
