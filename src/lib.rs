@@ -679,8 +679,8 @@ impl InflateStream {
                 destination[offset..source.len()+offset].copy_from_slice(&source);
                 offset += source.len();
             }
-            for i in 0..(destination.len() - offset) {
-                destination[i + offset] = source[i];
+            for i in offset..destination.len() {
+                destination[offset] = source[i - offset];
             }
         }
 
