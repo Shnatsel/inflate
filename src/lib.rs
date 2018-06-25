@@ -679,9 +679,8 @@ impl InflateStream {
                 destination[offset..source.len()+offset].copy_from_slice(&source);
                 offset += source.len();
             }
-            for i in offset..destination.len() {
-                destination[offset] = source[i - offset];
-            }
+            let remaining_chunk = destination.len()-offset;
+            &mut destination[offset..].copy_from_slice(&source[..remaining_chunk]);
         }
 
         self.pos = pos_end;
