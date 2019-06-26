@@ -650,20 +650,9 @@ impl InflateStream {
             return Err("invalid run length in stream".to_owned());
         }
 
-        rle_decode(&mut self.buffer, usize::from(dist), usize::from(len));
-        // if self.buffer.len() < pos_end as usize {
-        //     // ensure the buffer length will not exceed the amount of allocated memory
-        //     assert!(pos_end <= buffer_size);
-        //     // ensure that the uninitialized chunk of memory will be fully overwritten
-        //     assert!(self.pos as usize <= self.buffer.len());
-        //     unsafe {
-        //         self.buffer.set_len(pos_end as usize);
-        //     }
-        // }
-        // assert!(dist > 0); // validation against reading uninitialized memory
-        // for i in self.pos as usize..pos_end as usize {
-        //     self.buffer[i] = self.buffer[i - dist as usize];
-        // }
+        let buffer_len = self.buffer.len();
+        rle_decode(&mut self.buffer, usize::from(dist), usize::from(pos_end - self.pos));
+
         self.pos = pos_end;
         Ok(left)
     }
