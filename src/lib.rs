@@ -650,10 +650,9 @@ impl InflateStream {
             return Err("invalid run length in stream".to_owned());
         }
 
-        let buffer_len = self.buffer.len();
         rle_decode(&mut self.buffer, usize::from(dist), usize::from(pos_end - self.pos));
-
         self.pos = pos_end;
+
         Ok(left)
     }
 
