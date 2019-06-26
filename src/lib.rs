@@ -609,9 +609,6 @@ impl InflateStream {
     fn run_len_dist(&mut self, len: u16, dist: u16) -> Result<Option<u16>, String> {
         debug!("RLE -{}; {} (cap={} len={})", dist, len,
                self.buffer.capacity(), self.buffer.len());
-        if dist < 1 {
-            return Err("invalid run length in stream".to_owned());
-        }
         // `buffer_size` is used for validating `unsafe` below, handle with care
         let buffer_size = self.buffer.capacity() as u16;
         let len = if self.pos < dist {
