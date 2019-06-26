@@ -66,9 +66,12 @@
 //! ```
 
 extern crate adler32;
+extern crate rle_decode_helper;
 
 use std::cmp;
 use std::slice;
+
+use rle_decode_helper::rle_decode;
 
 mod checksum;
 use checksum::{Checksum, adler32_from_bytes};
@@ -647,19 +650,20 @@ impl InflateStream {
             return Err("invalid run length in stream".to_owned());
         }
 
-        if self.buffer.len() < pos_end as usize {
-            // ensure the buffer length will not exceed the amount of allocated memory
-            assert!(pos_end <= buffer_size);
-            // ensure that the uninitialized chunk of memory will be fully overwritten
-            assert!(self.pos as usize <= self.buffer.len());
-            unsafe {
-                self.buffer.set_len(pos_end as usize);
-            }
-        }
-        assert!(dist > 0); // validation against reading uninitialized memory
-        for i in self.pos as usize..pos_end as usize {
-            self.buffer[i] = self.buffer[i - dist as usize];
-        }
+        rle_decode(&mut self.buffer, usize::from(dist), usize::from(len));
+        // if self.buffer.len() < pos_end as usize {
+        //     // ensure the buffer length will not exceed the amount of allocated memory
+        //     assert!(pos_end <= buffer_size);
+        //     // ensure that the uninitialized chunk of memory will be fully overwritten
+        //     assert!(self.pos as usize <= self.buffer.len());
+        //     unsafe {
+        //         self.buffer.set_len(pos_end as usize);
+        //     }
+        // }
+        // assert!(dist > 0); // validation against reading uninitialized memory
+        // for i in self.pos as usize..pos_end as usize {
+        //     self.buffer[i] = self.buffer[i - dist as usize];
+        // }
         self.pos = pos_end;
         Ok(left)
     }

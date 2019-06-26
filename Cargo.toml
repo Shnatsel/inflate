@@ -13,3 +13,4 @@ unstable = []
 
 [dependencies]
 adler32 = "1.0.2"
+rle-decode-helper = {path = "../rle-decode-helper"}
